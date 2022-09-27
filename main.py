@@ -21,23 +21,27 @@ class MainRun(object):
         self.dw = displayW
         self.dh = displayH
         self.currCell = (0,0)
-        self.currentBoard = [[0,0,0,0,0,0,0,0,0], ### Board representation as a grid for solving purposes
+        self.currentBoard = [[0,0,0,0,-1,0,0,-1,0], ### Board representation as a grid for solving purposes
+                             [0,0,-1,0,0,0,0,0,0],
+                             [0,0,0,0,0,0,0,-1,0],
+                             [0,0,0,0,-1,0,0,0,0],
+                             [0,-1,0,0,0,0,0,-1,0],
                              [0,0,0,0,0,0,0,0,0],
+                             [0,0,0,-1,0,0,0,0,0],
                              [0,0,0,0,0,0,0,0,0],
-                             [0,0,0,0,0,0,0,0,0],
-                             [0,0,0,0,0,0,0,0,0],
-                             [0,0,0,0,0,0,0,0,0],
-                             [0,0,0,0,0,0,0,0,0],
-                             [0,0,0,0,0,0,0,0,0],
-                             [0,0,0,0,0,0,0,0,0],
-                            ] 
+                             [0,0,0,0,0,0,-1,0,0],
+                            ]
+        self.setCells = [(0,0), (0,1)]
         self.cells = {} ### Contains the cell rectanlge objects to be clickable and drawable
 
         ### Initalizing Rect Objects
         for i in range(9):
             for j in range(9):
                 font = pygame.font.Font(None, 90)
-                surface = font.render(" " + str(self.currentBoard[i][j]), True, (200,100,0))
+                if(self.currentBoard[i][j] != -1): ### If the board has a set value
+                    surface = font.render(" " + str(self.currentBoard[i][j]), True, (0,0,0))
+                else:
+                    surface = font.render(" " , True, (200,100,0)) ### Empty spot
                 self.cells[(i,j)] = (pygame.Rect(60 + 75*j, 60 + 75*i, 75, 75), surface)
         self.main()
 
@@ -55,11 +59,17 @@ class MainRun(object):
             pygame.draw.line(win, penColor, (60,60 + 75 * i), (735, 60 + 75 * i), 2)
             penColor = BLACK
 
-        for key, val in self.cells.items():
-            rec = val[0]
-            txt = val[1]
-            win.blit(txt, (rec.x+5, rec.y+5))
-            pygame.draw.rect(win, (255,100,25), rec, 1)
+        ### Populating rectanlge objects
+        for i in range(9):
+            for j in range(9):
+                cur = self.cells[(i,j)]
+                rec = cur[0]
+                txt = cur[1]
+                win.blit(txt, (rec.x+5, rec.y+5))
+                if((i,j) == self.currCell):
+                    pygame.draw.rect(win, (25,255,0), rec, 1)
+                else:
+                    pygame.draw.rect(win, (255,100,25), rec, 1)
 
     def isClickedOn(self):
         pos = pygame.mouse.get_pos()
@@ -81,6 +91,7 @@ class MainRun(object):
                     quit()
                 elif event.type == pygame.KEYDOWN:
                     c = event.unicode
+                    ### If the key pressed is a digit and there is currently a cell selected
                     if((c == '1' or c == '2' or c == '3' or c == '4' or c == '5' or
                     c == '6' or c == '7' or c == '8' or c == '9') and self.currCell):
                         temp = list(self.cells[self.currCell])
@@ -90,17 +101,21 @@ class MainRun(object):
                         self.cells[self.currCell] = tuple(temp)
                         self.currentBoard[self.currCell[0]][self.currCell[1]] = int(c)
                         self.currCell = None
-
                 elif event.type == pygame.MOUSEBUTTONUP:
-                    pos = pygame.mouse.get_pos()
                     cell = self.isClickedOn()
                     tempRec = cell[0]
-                    font = pygame.font.Font(None, 90)
-                    surface = font.render(" " + str(self.currentBoard[cell[1]][cell[2]]), True, (200,0,0))
-                    tempRec[1] = surface
-                    self.cells[(cell[1],cell[2])] = tuple(tempRec)
-                    self.currCell = (cell[1], cell[2])
+                    i = cell[1]
+                    j = cell[2]
+                    if((i,j) not in self.setCells):
+                        font = pygame.font.Font(None, 90)
 
-                
+                        if(self.currentBoard[i][j] != -1):
+                            surface = font.render(" " + str(self.currentBoard[i][j]), True, (200,100,0))
+                        else:
+                            surface = font.render(" " , True, (200,100,0))
+                        tempRec[1] = surface
+                        self.cells[(cell[1],cell[2])] = tuple(tempRec)
+                        self.currCell = (cell[1], cell[2])
+
 if __name__ == "__main__":
     MainRun()
