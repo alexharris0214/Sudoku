@@ -1,12 +1,9 @@
-from cmath import rect
-from typing import List
-from xmlrpc.client import Boolean
 import pygame
 
-def checkCollision(pos,  rect: pygame.rect.Rect) -> Boolean:
+def checkCollision(pos,  rect: pygame.rect.Rect) -> bool:
     return rect.collidepoint(pos)
 
-def isValid(grid: List[List[int]]) -> Boolean:
+def isValid(grid: list[list[int]]) -> bool:
     for row in range(len(grid)):
         for col in range(len(grid)):
             # check value is an int
@@ -20,6 +17,7 @@ def isValid(grid: List[List[int]]) -> Boolean:
     cols = []
     for col in range(len(grid)):
         for row in grid:
+
             cols += [row[col]]
         # set will get unique values, its converted to list so you can compare
         # it's sorted so the comparison is done correctly.
@@ -28,3 +26,6 @@ def isValid(grid: List[List[int]]) -> Boolean:
         cols = []
     # if you get past all the false checks return True
     return True
+
+def solve(board: list[list[int]]):
+    pass
