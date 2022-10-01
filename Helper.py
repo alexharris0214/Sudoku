@@ -10,11 +10,7 @@ def isValid(grid: List[List[int]]) -> Boolean:
     for row in range(len(grid)):
         for col in range(len(grid)):
             # check value is an int
-            if grid[row][col] < 1 or type(grid[row][col]) is not type(1):
-                return False
-            # check value is within 1 through n.
-            # for example a 2x2 grid should not have the value 8 in it
-            elif grid[row][col] > len(grid):
+            if (grid[row][col] < 1 or type(grid[row][col]) is not type(1)) or (grid[row][col] > len(grid)):
                 return False
     # check the rows
     for row in grid:
