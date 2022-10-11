@@ -1,7 +1,8 @@
+import time
 import pygame
-
-from Helper import checkCollision, isValid
+from Helper import checkCollision
 from PuzzleLoader import Loader
+from Solver import Solver
 pygame.init()
 
 displayW = 1000
@@ -22,6 +23,7 @@ class MainRun(object):
         self.puzzleLoader = Loader(self.filePath)
         if(not self.puzzleLoader.tryFile()):
             quit()
+        self.solver = Solver()
         self.dw = displayW
         self.dh = displayH
         self.currCell = None
@@ -124,7 +126,7 @@ class MainRun(object):
         case = button.y
         #Check Button
         if(case == 100):
-            if(isValid(self.currentBoard)):
+            if(self.solver.isPuzzleValid(self.currentBoard)):
                 self.labelsToDraw.append("win")
                 try:
                     self.labelsToDraw.remove("lose")
@@ -144,7 +146,26 @@ class MainRun(object):
             self.__init__()
 
     def solve(self):
-        pass
+        clock.tick(50)
+        find = self.solver.findEmpty(self.currentBoard)
+        if not find:
+            return True
+        else:
+            row, col = find
+
+        for i in range(1,10):
+            if(self.solver.isCellValid(self.currentBoard, i, row, col)):
+                self.currentBoard[row][col] = i
+                self.drawBoard()
+                pygame.display.update()
+                if(self.solve()):
+                    
+                    return True
+                self.currentBoard[row][col] = 0
+                self.drawBoard()
+                pygame.display.update()
+        return False
+
 
     #Creates rectangle objects for buttons
     def populateButtons(self):
